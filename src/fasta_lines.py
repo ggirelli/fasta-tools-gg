@@ -7,9 +7,10 @@
 # Email: gigi.ga90@gmail.com
 # Version: 1.0.0
 # Date: 20170706
-# Description:	split sequence line at a given position (default 80 nt, as for
-# 				fasta format definition). If negative position is given, keeps
-# 				the whole sequence on a single line. Helpful for analyses.
+# Description:	generate oligos of length k from the provided fasta file.
+# 
+# Note:
+# 	The fasta file should have each sequence in one line.
 # 
 # ------------------------------------------------------------------------------
 
@@ -23,14 +24,18 @@ import argparse
 
 # Add script description
 parser = argparse.ArgumentParser(
-	description = 'Generate k-mers from fasta file.'
+	description = 'Manages fasta file sequence line length.'
 )
 
 # Add mandatory arguments
-parser.add_argument('k', type = int, nargs = 1,
-	help = "Oligo length in nt.")
 parser.add_argument('fasta', type = str, nargs = 1,
 	help = 'Path to input fasta file.')
+
+# Add arguments with default value
+parser.add_argument('-k', type = int, nargs = 1,
+	help = """
+	Sequence line length in nt. If 0, one line per sequence.
+	""", default = [80])
 
 # Parse arguments
 args = parser.parse_args()
@@ -41,36 +46,21 @@ k = args.k[0]
 
 # FUNCTIONS ====================================================================
 
-def mk_oligo(eid, eseq, k):
-	"""Make k-mers from provided sequence.
+def format_element(eid, eseq, k):
+	"""Format a sequence element using FASTA format and k sequence length.
 
 	Args:
 		eid (string): element ID.
 		eseq (string): element sequence.
-		k (int): oligo length.
+		k (int): sequence line length.
 
 	Return:
-		string: fasta-like oligo sequence.
+		string: "> %s\n%s" % (eid, eseq_split_by_k)
 	"""
-	eseq = [eseq[i:min(i + k, len(eseq))]for i in range(0, len(eseq), k)]
-
-	faseq = ["> %s:o%d\n%s" % (eid, i, format_element(eseq[i]))
-		for i in range(len(eseq))]
-
-	return("\n".join(faseq))
-
-def format_element(eseq):
-	"""Format a sequence element using FASTA format (split in lines of 80 chr).
-
-	Args:
-		eseq (string): element sequence.
-
-	Return:
-		string: lines of 80 chr
-	"""
-	k = 80
-	eseq = [eseq[i:min(i + k, len(eseq))]for i in range(0, len(eseq), k)]
-	return("\n".join(eseq))
+	if k > 0:
+		eseq = [eseq[i:min(i + k, len(eseq))]for i in range(0, len(eseq), k)]
+		eseq = "\n".join(eseq)
+	return("> %s\n%s" % (eid, eseq))
 
 # RUN ==========================================================================
 
@@ -84,7 +74,7 @@ with open(fa_in, 'r') as fi:
 		if line.strip().startswith('>'):
 			if type(e[0]) == type(''):
 				# Write previous sequence
-				print(mk_oligo(*e, k))
+				print(format_element(*e, k))
 
 				# Reset sequence
 				e[1] = ""
@@ -96,7 +86,7 @@ with open(fa_in, 'r') as fi:
 			# Save sequence
 			e[1] += line.strip()
 			continue
-print(mk_oligo(*e, k))
+print(format_element(*e, k))
 
 # Close file pointers
 fi.close()

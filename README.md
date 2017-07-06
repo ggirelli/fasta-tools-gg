@@ -29,15 +29,29 @@ optional arguments:
 ## `./fasta_kmers.py`
 
 ```
-usage: fasta_kmers.py [-h] k fastaInput fastaOutput
+usage: fasta_kmers.py [-h] k fasta
 
 Generate k-mers from fasta file.
 
 positional arguments:
-  k            Oligo length in nt.
-  fastaInput   Path to input fasta file.
-  fastaOutput  Path to output with outfmt 6.
+  k           Oligo length in nt.
+  fasta       Path to input fasta file.
 
 optional arguments:
-  -h, --help   show this help message and exit
+  -h, --help  show this help message and exit
+```
+
+## `./fasta_lines.py`
+
+```
+usage: fasta_lines.py [-h] [-k K] fasta
+
+Manages fasta file sequence line length.
+
+positional arguments:
+  fasta       Path to input fasta file.
+
+optional arguments:
+  -h, --help  show this help message and exit
+  -k K        Sequence line length in nt. If 0, one line per sequence.
 ```
