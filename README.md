@@ -25,3 +25,19 @@ positional arguments:
 optional arguments:
   -h, --help  show this help message and exit
 ```
+
+## `./fasta_kmers.py`
+
+```
+usage: fasta_kmers.py [-h] k fastaInput fastaOutput
+
+Generate k-mers from fasta file.
+
+positional arguments:
+  k            Oligo length in nt.
+  fastaInput   Path to input fasta file.
+  fastaOutput  Path to output with outfmt 6.
+
+optional arguments:
+  -h, --help   show this help message and exit
+```
